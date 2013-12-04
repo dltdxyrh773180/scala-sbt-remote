@@ -1,0 +1,50 @@
+
+import akka.actor._
+import akka.routing.FromConfig
+import akka.util.Timeout
+import com.typesafe.config.ConfigFactory
+import org.slf4j.LoggerFactory 
+
+import akka.pattern.ask
+
+//import scala.concurrent.Await
+import akka.dispatch.Await
+
+case class Greeting(who: String)
+
+class GreetingActor extends Actor with ActorLogging { 
+  def receive = {
+    case Greeting(who) => {
+      log.info("Welcome " + who)
+      Thread.sleep(1000) 
+      log.info("Bye " + who)
+    }
+  }
+}
+
+object Sample extends App {
+  val logger = LoggerFactory.getLogger(this.getClass)
+  val system = ActorSystem("sample")
+  val greeter = system.actorOf(Props[GreetingActor], name = "greeter")
+
+  implicit val timeout = Timeout(5000)
+  
+  logger.info("Starting message")
+  
+  List(
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta",
+    "echo",
+    "foxtrot",
+    "golf"
+  ).foreach(m => {
+    greeter ! Greeting(m)
+  })
+  
+  logger.info("Exit message")
+}
+
+
+

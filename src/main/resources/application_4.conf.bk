@@ -1,0 +1,12 @@
+akka {
+  loglevel = DEBUG
+  
+  actor.deployment {
+   /greeter {
+       router = round-robin
+       nr-of-instances = 7
+    }
+  }
+}
+
+
